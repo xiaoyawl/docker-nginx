@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  nginx:
+    build:
+      context: http://git.dwhd.org/lookback/docker-nginx.git
+    restart: always
+    image: nginx:1.10.1
+    ports:
+    - "81:80"
+    volumes:
+    - /data/nginx:/data/wwwroot
+    - /etc/localtime:/etc/localtime
