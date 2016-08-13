@@ -21,6 +21,22 @@ mkdir -p ${DATA_DIR}
 [ ! -f "$DATA_DIR/index.html" ] && echo 'Hello here, Let us see the world.' > $DATA_DIR/index.html
 chown -R www.www $DATA_DIR
 
+if [ -d /etc/logrotate.d ]; then
+	cat > /etc/logrotate.d/nginx <<-EOF
+		$(dirname ${DATA_DIR})/wwwlogs/*.log {
+			daily
+			rotate 5
+			missingok
+			dateext
+			compress
+			notifempty
+			sharedscripts
+			postrotate
+    		[ -e /var/run/nginx.pid ] && kill -USR1 \`cat /var/run/nginx.pid\`
+			endscript
+		}
+	EOF
+fi
 
 if [[ "${PHP_FPM}" =~ ^[yY][eS][sS]$ ]]; then
 	if [ -z "${PHP_FPM_SERVER}" ]; then

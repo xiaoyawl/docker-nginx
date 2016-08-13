@@ -16,10 +16,8 @@ RUN set -x && \
 	DOWN_URL="${DOWN_URL}/nginx-${VERSION}.tar.gz" && \
 	FILE_NAME=${DOWN_URL##*/} && \
 	apk --update --no-cache upgrade && \
-		apk --update --no-cache add geoip pcre \
-		libxslt gd openssl-dev pcre-dev zlib-dev \
-		build-base git geoip-dev linux-headers libxslt-dev \
-		gd-dev openssl-dev libstdc++ libgcc patch && \
+		apk --update --no-cache add geoip pcre libxslt gd openssl-dev pcre-dev zlib-dev build-base git \
+		geoip-dev linux-headers libxslt-dev gd-dev openssl-dev libstdc++ libgcc patch logrotate && \
 	{ while :;do curl -LkO ${DOWN_URL} && { [ "$(sha256sum ${TEMP_DIR}/${FILE_NAME} | awk '{print $1}')" == "${SHA256}" ] && break; }; done; } && \
 	tar xf ${TEMP_DIR}/${FILE_NAME} && \
 	curl -Lk https://mirrors.dwhd.org/nginx-mode.tar.gz|tar xz -C ${TEMP_DIR} && \
@@ -80,7 +78,8 @@ RUN set -x && \
 	apk del build-base git patch && \
 	rm -rf /var/cache/apk/* /tmp/*
 
-ENV PATH=${INSTALL_DIR}/sbin:$PATH
+ENV PATH=${INSTALL_DIR}/sbin:$PATH \
+	TERM=linux
 
 ADD nginx.conf ${INSTALL_DIR}/conf/nginx.conf
 ADD entrypoint.sh /entrypoint.sh
