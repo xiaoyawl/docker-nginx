@@ -30,7 +30,7 @@ if [[ "${PHP_FPM}" =~ ^[yY][eS][sS]$ ]]; then
 	fi
 	PHP_FPM_PORT=${PHP_FPM_PORT:-9000}
 	sed -i "s/PHP_FPM_SERVER/${PHP_FPM_SERVER}/" ${INSTALL_DIR}/conf/nginx.conf
-	sed -i "s/PORT/${PHP_FPM_PORT/" ${INSTALL_DIR}/conf/nginx.conf
+	sed -i "s/PORT/${PHP_FPM_PORT}/" ${INSTALL_DIR}/conf/nginx.conf
 	[ -f ${DATA_DIR}/index.php ] || cat > ${DATA_DIR}/index.php <<< '<? phpinfo(); ?>'
 else
 	sed -i '73,78d' ${INSTALL_DIR}/conf/nginx.conf
