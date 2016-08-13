@@ -4,7 +4,7 @@
 # Author: LookBack
 # Email: admin#dwhd.org
 # Version:
-# Created Time: 2016年07月06日 星期三 18时51分33秒
+# Created Time: 2016年08月12日 星期五 16时43分50秒
 #########################################################################
 
 set -e
@@ -18,34 +18,22 @@ fi
 
 sed -i "s@/home/wwwroot@$DATA_DIR@" ${INSTALL_DIR}/conf/nginx.conf
 mkdir -p ${DATA_DIR}
-[ ! -f "$DATA_DIR/index.html" ] && echo '<p>
-<h1 style="text-align:center;">
-	<span style="line-height:1.5;"><span style="color:#337FE5;">Hello world! This Nginx!</span><br />
-	</span><span style="line-height:1.5;color:#E53333;">Welcome to use Docker!</span>
-</h1>
-<h1 style="text-align:center;">
-	<span style="line-height:1.5;color:#E53333;">^_^┢┦aΡｐy&nbsp;</span>
-</h1>
-</p>
-<p>
-<br />
-</p>
-' > $DATA_DIR/index.html
+[ ! -f "$DATA_DIR/index.html" ] && echo 'Hello here, Let us see the world.' > $DATA_DIR/index.html
 chown -R www.www $DATA_DIR
 
-CPU_num=$(awk '/processor/{i++}END{print i}' /proc/cpuinfo)
-if [ "$CPU_num" == '2' ];then
-	sed -i 's@^worker_processes.*@worker_processes 2;\nworker_cpu_affinity 10 01;@' ${INSTALL_DIR}/conf/nginx.conf
-elif [ "$CPU_num" == '3' ];then
-	sed -i 's@^worker_processes.*@worker_processes 3;\nworker_cpu_affinity 100 010 001;@' ${INSTALL_DIR}/conf/nginx.conf
-elif [ "$CPU_num" == '4' ];then
-	sed -i 's@^worker_processes.*@worker_processes 4;\nworker_cpu_affinity 1000 0100 0010 0001;@' ${INSTALL_DIR}/conf/nginx.conf
-elif [ "$CPU_num" == '6' ];then
-	sed -i 's@^worker_processes.*@worker_processes 6;\nworker_cpu_affinity 100000 010000 001000 000100 000010 000001;@' ${INSTALL_DIR}/conf/nginx.conf
-elif [ "$CPU_num" == '8' ];then
-	sed -i 's@^worker_processes.*@worker_processes 8;\nworker_cpu_affinity 10000000 01000000 00100000 00010000 00001000 00000100 00000010 00000001;@' ${INSTALL_DIR}/conf/nginx.conf
+
+if [[ "${PHP_FPM}" =~ ^[yY][eS][sS]$ ]]; then
+	if [ -z "${PHP_FPM_SERVER}" ]; then
+		echo >&2 'error:  missing PHP_FPM_SERVER'
+		echo >&2 '  Did you forget to add -e PHP_FPM_SERVER=... ?'
+		exit 127
+	fi
+	PHP_FPM_PORT=${PHP_FPM_PORT:-9000}
+	sed -i "s/PHP_FPM_SERVER/${PHP_FPM_SERVER}/" ${INSTALL_DIR}/conf/nginx.conf
+	sed -i "s/PORT/${PHP_FPM_PORT/" ${INSTALL_DIR}/conf/nginx.conf
+	[ -f ${DATA_DIR}/index.php ] || cat > ${DATA_DIR}/index.php <<< '<? phpinfo(); ?>'
 else
-	echo Google worker_cpu_affinity
+	sed -i '73,78d' ${INSTALL_DIR}/conf/nginx.conf
 fi
 
 exec "$@" -g "daemon off;"
