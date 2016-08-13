@@ -1,0 +1,34 @@
+version: '2'
+
+services:
+	php:
+		build:
+			context: https://github.com/xiaoyawl/docker-php.git
+		restart: always
+		privileged: true
+		image: benyoo/php:latest
+		volumes:
+		- /etc/localtime:/etc/localtime:ro
+		- /data/wwwroot:/data/wwwroot:rw
+	nginx:
+		build:
+			context: https://github.com/xiaoyawl/docker-nginx.git
+		restart: always
+		privileged: true
+		image: benyoo/nginx:latest
+		ports:
+		- "80:80"
+		- "443:443"
+		links:
+		- php:php
+		volumes_from:
+		- php
+		environment:
+		- PHP_FPM=Yes
+		- PHP_FPM_SERVER=php
+		- PHP_FPM_PORT=9000
+		volumes:
+		- /etc/localtime:/etc/localtime:ro
+		- /data/wwwroot:/data/wwwroot:rw
+		- /data/logs/wwwlogs:/data/wwwlogs:rw
+		- /data/conf/nginx/vhost:/usr/local/nginx/conf/vhost:rw
