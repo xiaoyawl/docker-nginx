@@ -76,12 +76,12 @@ RUN set -x && \
 	make -j $(awk '/processor/{i++}END{print i}' /proc/cpuinfo) && \
 	make install && \
 	apk del build-base git patch && \
-	rm -rf /var/cache/apk/* /tmp/*
+	rm -rf /var/cache/apk/* /tmp/* ${INSTALL_DIR}/conf/nginx.conf
 
 ENV PATH=${INSTALL_DIR}/sbin:$PATH \
 	TERM=linux
 
-ADD nginx.conf ${INSTALL_DIR}/conf/nginx.conf
+ADD nginx.conf /nginx.conf
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
