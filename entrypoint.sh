@@ -8,16 +8,16 @@
 #########################################################################
 
 set -e
-
-[ ! -d /var/log/supervisor ] && mkdir -p /var/log/supervisor
+[[ $DEBUG == true ]] && set -x
 
 if [ -n "$TIMEZONE" ]; then
 	rm -rf /etc/localtime && \
 	ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 fi
 
+Nginx_Conf_Dir=/etc/nginx-conf-example
+[ ! -d /var/log/supervisor ] && mkdir -p /var/log/supervisor
 #[ "${1:0:1}" = '-' ] && set -- nginx "$@"
-
 
 mkdir -p ${DATA_DIR}
 [ ! -f "$DATA_DIR/index.html" ] && echo 'Hello here, Let us see the world.' > $DATA_DIR/index.html
@@ -34,7 +34,7 @@ if [ -d /etc/logrotate.d ]; then
 			notifempty
 			sharedscripts
 			postrotate
-    		[ -e /var/run/nginx.pid ] && kill -USR1 \`cat /var/run/nginx.pid\`
+		    [ -e /var/run/nginx.pid ] && kill -USR1 \`cat /var/run/nginx.pid\`
 			endscript
 		}
 	EOF
@@ -42,7 +42,7 @@ fi
 
 #if [ ! -f ${INSTALL_DIR}/conf/nginx.conf ]; then
 if [[ ! "${SED_CHANGE}" =~ ^[nN][oO]$ ]]; then
-	cp /etc/nginx.conf ${INSTALL_DIR}/conf/nginx.conf
+	cp ${Nginx_Conf_Dir}/nginx.conf ${INSTALL_DIR}/conf/nginx.conf
 	sed -i "s@/home/wwwroot@$DATA_DIR@" ${INSTALL_DIR}/conf/nginx.conf
 	if [[ "${PHP_FPM}" =~ ^[yY][eS][sS]$ ]]; then
 		if [ -z "${PHP_FPM_SERVER}" ]; then
@@ -59,5 +59,25 @@ if [[ ! "${SED_CHANGE}" =~ ^[nN][oO]$ ]]; then
 	fi
 fi
 
-#exec "$@" -g "daemon off;"
+if [ -n "$REWRITE" ]; then
+	[ ! -d ${INSTALL_DIR}/conf/rewrite ] && mkdir -p ${INSTALL_DIR}/conf/rewrite
+	if [ "$REWRITE" = "wordpress" ]; then
+		[ ! -f ${INSTALL_DIR}/conf/rewrite/wordpress.conf ] && cp ${Nginx_Conf_Dir}/rewrite/wordpress.conf ${INSTALL_DIR}/conf/rewrite/wordpress.conf
+	elif [ "$REWRITE" = "discuz" ]; then
+		[ ! -f ${INSTALL_DIR}/conf/rewrite/discuz.conf ] && cp ${Nginx_Conf_Dir}/rewrite/discuz.conf ${INSTALL_DIR}/conf/rewrite/discuz.conf
+	elif [ "$REWRITE" = "opencart" ]; then
+		[ ! -f ${INSTALL_DIR}/conf/rewrite/opencart.conf ] && cp ${Nginx_Conf_Dir}/rewrite/opencart.conf ${INSTALL_DIR}/conf/rewrite/opencart.conf
+	elif [ "$REWRITE" = "laravel" ]; then
+		[ ! -f ${INSTALL_DIR}/conf/rewrite/opencart.conf ] && cp ${Nginx_Conf_Dir}/rewrite/opencart.conf ${INSTALL_DIR}/conf/rewrite/opencart.conf
+	elif [ ! -f "$REWRITE" = "typecho" ]; then
+		[ ! -f ${INSTALL_DIR}/conf/rewrite/typecho.conf ] && cp ${Nginx_Conf_Dir}/rewrite/typecho.conf ${INSTALL_DIR}/conf/rewrite/typecho.conf
+	elif [ ! -f "$REWRITE" = "ecshop" ]; then
+		[ ! -f ${INSTALL_DIR}/conf/rewrite/ecshop.conf ] && cp ${Nginx_Conf_Dir}/rewrite/ecshop.conf ${INSTALL_DIR}/conf/rewrite/ecshop.conf
+	elif [ ! -f "$REWRITE" = "drupal" ]; then
+		[ ! -f ${INSTALL_DIR}/conf/rewrite/drupal.conf ] && cp ${Nginx_Conf_Dir}/rewrite/drupal.conf ${INSTALL_DIR}/conf/rewrite/drupal.conf
+	elif [ ! -f "$REWRITE" = "joomla" ]; then
+		[ ! -f ${INSTALL_DIR}/conf/rewrite/joomla.conf ] && cp ${Nginx_Conf_Dir}/rewrite/joomla.conf ${INSTALL_DIR}/conf/rewrite/joomla.conf
+	fi
+fi
+
 supervisord -n -c /etc/supervisord.conf
