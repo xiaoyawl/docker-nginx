@@ -9,12 +9,14 @@
 
 set -e
 
+[ ! -d /var/log/supervisor ] && mkdir -p /var/log/supervisor
+
 if [ -n "$TIMEZONE" ]; then
 	rm -rf /etc/localtime && \
 	ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 fi
 
-[ "${1:0:1}" = '-' ] && set -- nginx "$@"
+#[ "${1:0:1}" = '-' ] && set -- nginx "$@"
 
 
 mkdir -p ${DATA_DIR}
@@ -40,7 +42,7 @@ fi
 
 #if [ ! -f ${INSTALL_DIR}/conf/nginx.conf ]; then
 if [[ ! "${SED_CHANGE}" =~ ^[nN][oO]$ ]]; then
-	cp /nginx.conf ${INSTALL_DIR}/conf/nginx.conf
+	cp /etc/nginx.conf ${INSTALL_DIR}/conf/nginx.conf
 	sed -i "s@/home/wwwroot@$DATA_DIR@" ${INSTALL_DIR}/conf/nginx.conf
 	if [[ "${PHP_FPM}" =~ ^[yY][eS][sS]$ ]]; then
 		if [ -z "${PHP_FPM_SERVER}" ]; then
@@ -57,4 +59,5 @@ if [[ ! "${SED_CHANGE}" =~ ^[nN][oO]$ ]]; then
 	fi
 fi
 
-exec "$@" -g "daemon off;"
+#exec "$@" -g "daemon off;"
+supervisord -n -c /etc/supervisord.conf

@@ -16,8 +16,8 @@ RUN set -x && \
 	DOWN_URL="${DOWN_URL}/nginx-${VERSION}.tar.gz" && \
 	FILE_NAME=${DOWN_URL##*/} && \
 	apk --update --no-cache upgrade && \
-		apk --update --no-cache add geoip pcre libxslt gd openssl-dev pcre-dev zlib-dev build-base git \
-		geoip-dev linux-headers libxslt-dev gd-dev openssl-dev libstdc++ libgcc patch logrotate && \
+		apk --update --no-cache add geoip geoip-dev pcre libxslt gd openssl-dev pcre-dev zlib-dev build-base \
+		linux-headers libxslt-dev gd-dev openssl-dev libstdc++ libgcc patch logrotate supervisor inotify-tools git && \
 	{ while :;do curl -LkO ${DOWN_URL} && { [ "$(sha256sum ${TEMP_DIR}/${FILE_NAME} | awk '{print $1}')" == "${SHA256}" ] && break; }; done; } && \
 	tar xf ${TEMP_DIR}/${FILE_NAME} && \
 	curl -Lk https://mirrors.dwhd.org/nginx-mode.tar.gz|tar xz -C ${TEMP_DIR} && \
@@ -81,7 +81,8 @@ RUN set -x && \
 ENV PATH=${INSTALL_DIR}/sbin:$PATH \
 	TERM=linux
 
-ADD nginx.conf /nginx.conf
+ADD etc /etc
+#ADD nginx.conf /nginx.conf
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
@@ -90,4 +91,5 @@ EXPOSE 80 443
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["nginx"]
+#CMD ["/usr/sbin/supervisord"]
+#CMD ["/bin/bash", "/entrypoint.sh"]
