@@ -2,70 +2,59 @@
 
 [![Deploy to Tutum](https://s.tutum.co/deploy-to-tutum.svg)](https://dashboard.tutum.co/stack/deploy/)
 
-# Introduction
+# 介绍
 
-Dockerfile to build a [Nginx](http://www.nginx.org/) container image.
+Dockerfile文件编译出一个[Nginx](http://www.nginx.org/) 容器镜像。
 
-## Version
+## 版本
 
-Current Version: **benyoo/nginx:1.10.1**
+当前版本: [benyoo/nginx:1.10.1](https://hub.docker.com/r/benyoo/nginx/)
 
-# Contributing
+# 帮助
 
-If you find this image useful here's how you can help:
+如果你觉得这个镜像对你有用，你可以如下方法给我们提供帮助:
 
-- Send a Pull Request with your awesome new features and bug fixes
-- Help new users with [Issues](https://github.com/xiaoyawl/nginx-docker/issues) they may encounter
-- Support the development of this image with a [donation](支付宝:15555612612)
+- 发送pull请求与你最新的功能和bug修复
+- 帮助新用户解决他们可能遇到的[问题](https://github.com/xiaoyawl/docker-nginx/issues) 
+- 对这个镜像的作者进行[捐助](支付宝:15555612612)
 
-# Issues
+# 问题
 
-Docker is a relatively new project and is active being developed and tested by a thriving community of developers and testers and every
-release of docker features many enhancements and bugfixes.
-
-Given the nature of the development and release cycle it is very important that you have the latest version of docker installed because
-any issue that you encounter might have already been fixed with a newer docker release.
-
-Install the most recent version of the Docker Engine for your platform using the [official Docker releases](http://docs.docker.com/engin
-e/installation/), which can also be installed using:
+如何安装Docker
 
 ```bash
 curl -Lk https://get.docker.com/ | sh
 ```
 
-Fedora and RHEL/CentOS users should try disabling selinux with `setenforce 0` and check if resolves the issue. If it does than there is
-not much that I can help you with. You can either stick with selinux disabled (not recommended by redhat) or switch to using ubuntu.
+RHEL、CentOS、Fedora的用户可以使用`setenforce 0`来禁用selinux以达到解决一些问题
 
-If using the latest docker version and/or disabling selinux does not fix the issue then please file a issue request on the [issues](http
-s://github.com/xiaoyawl/nginx-docker/issues) page.
+如果你已经禁用了selinux并且使用的是最新版的Docker，如果还有疑问，你可以尝试通过 [issues](https://github.com/xiaoyawl/docker-nginx/issues) 页面来寻求帮助
 
-In your issue report please make sure you provide the following information:
+当你在issue 提交问题的时候请注意提供一下信息:
 
-- The host distribution and release version.
-- Output of the `docker version` command.
-- Output of the `docker info` command.
-- The `docker run` command you used to run the image (mask out the sensitive bits).
+- 宿主机的发行版和版本号.
+- 使用 `docker version` 命令来给出Docker版本信息.
+- 使用 `docker info` 命令来给出进一步信息.
+- 提供 `docker run` 命令的详情 (注意打码你的隐私信息).
 
-# Installation
+# 安装
 
-Automated builds of the image are available on [Dockerhub](https://hub.docker.com/r/benyoo/nginx) and is the recommended method of
-installation.
+直接使用我们在 [Dockerhub](https://hub.docker.com/r/benyoo/nginx) 上通过自动构建生成的镜像是最为推荐的方式
 
-> **Note**: Builds are also available on [Quay.io](https://quay.io/repository/benyoo/nginx)
+> **Note**: 也可以在 [Quay.io](https://quay.io/repository/benyoo/nginx)上构建
 
 ```bash
 docker pull benyoo/nginx:latest
 ```
 
-Since version `1.10.0`, the image builds are being tagged. You can now pull a particular version of redmine by specifying the version num
-ber. For example,
+由于`1.10.1`版本的镜像已经打了tag。您也可以通过指定版本号的方式pull指定版本的镜像。 例如，
 
 ```bash
 docker pull benyoo/nginx:1.10.1
 ```
 
-Alternately you can build the image yourself.
+另外你也可以通过自己构建来实现获取镜像。例如
 
 ```bash
-docker build -t benyoo/nginx:1.10.1 github.com/xiaoyawl/nginx-docker
+docker build -t benyoo/nginx:1.10.1 github.com/xiaoyawl/docker-nginx
 ```
