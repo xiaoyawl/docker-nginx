@@ -58,3 +58,54 @@ docker pull benyoo/nginx:1.10.1
 ```bash
 docker build -t benyoo/nginx:1.10.1 github.com/xiaoyawl/docker-nginx
 ```
+
+#运行
+1、常规运行方法：
+`docker run -d -p 80:80 -p 443:443 benyoo/nginx:latest
+2、挂载数据目录方法：
+```bash
+docker run -d -p 80:80 -p 443:443 \
+-v /etc/localtime:/etc/localtime:ro \ #将宿主机的时区文件挂载到容器内
+-v /data/wwwroot:/data/wwwroot:rw \   #将宿主机的web文件挂载到容器内
+-v /data/logs/wwwlogs:/data/wwwlogs:rw \  #将容器内的日志文件挂载到宿主机上
+-v /data/conf/nginx/vhost:/usr/local/nginx/conf/vhost:rw \ #将配置文件挂载进容器
+benyoo/nginx:latest
+```
+3、和php mysql redis 关联使用的方法
+```bash
+docker run -d --privileged --restart always \
+--name redis_server -p 127.0.0.1:6379:6379 \
+-v /etc/localtime:/etc/localtime:ro \
+-v /etc/redis.conf:/etc/redis.conf:ro \
+-v /data/redis:/data/redis:Z \
+benyoo/redis
+```
+```bash
+docker run -d --name mysql_server --restart always \
+-p 3306:3306 -e MYSQL_ROOT_PASSWORD=lookback \
+-v /etc/localtime:/etc/localtime:ro
+-v /data/mariadb:/data/mariadb:rw
+benyoo/mariadb
+```
+```bash
+docker run -d --restart always --name php_server \
+-e REDIS=Yes -e MEMCACHE=Yes -e SWOOLE=Yes \
+--link redis_server:resid_server \
+--link mysql_server:mysql_server \
+-v /etc/localtime:/etc/localtime:ro
+-v /data/wwwroot:/data/wwwroot:rw
+benyoo/php
+```
+```bash
+docker run -d --restart always --name nginx_server \
+-p 80:80 -p 443:443 \
+-e PHP_FPM=Yes -e PHP_FPM_SERVER=php_server \
+-e PHP_FPM_PORT=9000 -e REWRITE=wordpress \
+--link php_server:php_server \
+--link mysql_server:mysql_server \
+-v /etc/localtime:/etc/localtime:ro \
+-v /data/wwwroot:/data/wwwroot:rw \
+-v /data/logs/wwwlogs:/data/wwwlogs:rw \
+-v /data/conf/nginx/vhost:/usr/local/nginx/conf/vhost:rw \
+benyoo/nginx
+```
