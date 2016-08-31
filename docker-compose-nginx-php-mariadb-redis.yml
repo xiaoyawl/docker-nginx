@@ -1,0 +1,82 @@
+version: '2'
+services:
+  redis:
+    container_name: redis_server
+    restart: always
+    command: ["redis-server", "/etc/redis.conf"]
+    privileged: true
+    image: benyoo/redis:3.2.3
+    ports:
+    - "127.0.0.1:6379:6379"
+    environment:
+    - TERM=linux
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /etc/redis.conf:/etc/redis.conf:ro
+    - /data/redis:/data/redis:Z
+  php:
+    container_name: php_server
+    restart: always
+    #privileged: true
+    image: benyoo/php:5.6.24
+    ports:
+    - "9000:9000"
+    links:
+    - redis:resid_server
+    - mariadb:mysql_server
+    environment:
+    - TERM=linux
+    - REDIS=Yes
+    - MEMCACHE=Yes
+    - SWOOLE=Yes
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /data/wwwroot:/data/wwwroot:rw
+  nginx:
+    container_name: nginx_server
+    restart: always
+    #privileged: true
+    image: benyoo/nginx:1.10.1
+    ports:
+    - "80:80"
+    - "443:443"
+    links:
+    - php:php_server
+    - redis:resid_server
+    - mariadb:mysql_server
+    volumes_from:
+    - php
+    environment:
+    - TERM=linux
+    - PHP_FPM=Yes
+    - PHP_FPM_SERVER=php_server
+    - PHP_FPM_PORT=9000
+    - REWRITE=wordpress
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /data/wwwroot:/data/wwwroot:rw
+    - /data/wwwlogs:/data/wwwlogs:rw
+    #- /data/nginx-conf/nginx/conf/backup:/usr/local/nginx/conf/backup:rw
+    - /data/nginx-conf/nginx/conf:/usr/local/nginx/conf:rw
+  mariadb:
+    container_name: mysql_server
+    restart: always
+    image: benyoo/mariadb:10.1.14
+    command: ["mysqld","--wsrep-new-cluster"]
+    ports:
+    - "3306:3306"
+    - "4444:4444"
+    - "4567:4567"
+    - "4568:4568"
+    environment:
+    - TERM=linux
+    - TIMEZONE=Asia/Shanghai
+    - MYSQL_ROOT_PASSWORD=******
+    - REPLICATION_PASSWORD=*****
+    - GALERA=ON
+    - NODE_NAME=node1
+    - CLUSTER_NAME=dwhd_org_web_cluster
+    - CLUSTER_NODE_ADDRESS=1.2.3.4
+    - CLUSTER_ADDRESS=gcomm://1.2.3.4,5.6.7.8
+    volumes:
+    - /data/mariadb-data:/data/mariadb
