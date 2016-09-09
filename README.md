@@ -1,4 +1,4 @@
-[![Docker Repository on Quay.io](https://quay.io/repository/benyoo/nginx/status "Docker Repository on Quay.io")](https://quay.io/repository/benyoo/nginx)[![](https://badge.imagelayers.io/sameersbn/gitlab.svg)](https://imagelayers.io/?images=benyoo/nginx:latest 'Get your own badge on imagelayers.io')
+[![Docker Repository on Quay.io](https://quay.io/repository/benyoo/nginx/status "Docker Repository on Quay.io")](https://quay.io/repository/benyoo/nginx)[![](https://images.microbadger.com/badges/version/benyoo/nginx.svg)](http://microbadger.com/images/benyoo/nginx "Get your own version badge on microbadger.com")[![](https://images.microbadger.com/badges/image/benyoo/nginx.svg)](http://microbadger.com/images/benyoo/nginx "Get your own image badge on microbadger.com")
 
 [![Deploy to Tutum](https://s.tutum.co/deploy-to-tutum.svg)](https://dashboard.tutum.co/stack/deploy/)
 
