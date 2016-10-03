@@ -1,4 +1,4 @@
-[![Docker Repository on Quay.io](https://quay.io/repository/benyoo/nginx/status "Docker Repository on Quay.io")](https://quay.io/repository/benyoo/nginx)[![](https://images.microbadger.com/badges/version/benyoo/nginx.svg)](http://microbadger.com/images/benyoo/nginx "Get your own version badge on microbadger.com")[![](https://images.microbadger.com/badges/image/benyoo/nginx.svg)](http://microbadger.com/images/benyoo/nginx "Get your own image badge on microbadger.com")
+[![Docker Repository on Quay.io](https://quay.io/repository/benyoo/nginx/status "Docker Repository on Quay.io")](https://quay.io/repository/benyoo/nginx)[![](https://images.microbadger.com/badges/version/benyoo/nginx.svg)](http://microbadger.com/images/benyoo/nginx "Get your own version badge on microbadger.com")[![](https://images.microbadger.com/badges/image/benyoo/nginx.svg)](http://microbadger.com/images/benyoo/nginx "Get your own image badge on microbadger.com")[![Docker Pulls](https://img.shields.io/docker/pulls/benyoo/nginx.svg?maxAge=2592000)](https://hub.docker.com/r/benyoo/nginx/)
 
 [![Deploy to Tutum](https://s.tutum.co/deploy-to-tutum.svg)](https://dashboard.tutum.co/stack/deploy/)
 
