@@ -31,6 +31,7 @@ RUN set -x && \
 	git clone https://github.com/arut/nginx-rtmp-module.git -b v1.1.7 && \
 	git clone https://github.com/xiaokai-wang/nginx_upstream_check_module.git && \
 	git clone https://github.com/xiaokai-wang/nginx-stream-upsync-module.git && \
+	git clone https://github.com/leev/ngx_http_geoip2_module.git && \
 	addgroup -g 400 -S www && \
 	adduser -u 400 -S -h ${DATA_DIR} -s /sbin/nologin -g 'WEB Server' -G www www && \
 	find ${TEMP_DIR} -type f -exec sed -i 's/\r$//g' {} \; && \
@@ -82,6 +83,7 @@ RUN set -x && \
 		--add-module=../nginx-rtmp-module \
 		--add-module=../nginx_upstream_check_module \
 		--add-module=../nginx-stream-upsync-module && \
+		--add-module=../ngx_http_geoip2_module && \
 	make -j $(awk '/processor/{i++}END{print i}' /proc/cpuinfo) && \
 	make install && \
 	apk del build-base git patch && \
@@ -91,7 +93,6 @@ ENV PATH=${INSTALL_DIR}/sbin:$PATH \
 	TERM=linux
 
 ADD etc /etc
-#ADD nginx.conf /nginx.conf
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
