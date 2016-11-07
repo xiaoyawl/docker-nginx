@@ -21,7 +21,6 @@ Nginx_Conf_Dir=/etc/nginx-conf-example
 
 mkdir -p ${DATA_DIR}
 [ ! -f "$DATA_DIR/index.html" ] && echo 'Hello here, Let us see the world.' > $DATA_DIR/index.html
-chown -R www.www $DATA_DIR
 
 if [ -d /etc/logrotate.d ]; then
 	cat > /etc/logrotate.d/nginx <<-EOF
@@ -42,6 +41,7 @@ fi
 
 #if [ ! -f ${INSTALL_DIR}/conf/nginx.conf ]; then
 if [[ ! "${SED_CHANGE}" =~ ^[nN][oO]$ ]]; then
+	chown -R www.www $DATA_DIR
 	cp ${Nginx_Conf_Dir}/nginx.conf ${INSTALL_DIR}/conf/nginx.conf
 	sed -i "s@/home/wwwroot@$DATA_DIR@" ${INSTALL_DIR}/conf/nginx.conf
 	if [[ "${PHP_FPM}" =~ ^[yY][eS][sS]$ ]]; then
