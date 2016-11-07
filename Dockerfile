@@ -3,18 +3,25 @@ FROM benyoo/alpine:3.4.20160812
 
 MAINTAINER from www.dwhd.org by lookback (mondeolove@gmail.com)
 
-ARG VERSION=${VERSION:-1.10.1}
-ARG SHA256=${SHA256:-1fd35846566485e03c0e318989561c135c598323ff349c503a6c14826487a801}
+ARG VERSION=${VERSION:-1.10.2}
+ARG SHA256=${SHA256:-1045ac4987a396e2fa5d0011daf8987b612dd2f05181b67507da68cbe7d765c2}
+ARG AUTOINDEX_NAME_LEN=${AUTOINDEX_NAME_LEN:-200}
 
 ENV INSTALL_DIR=/usr/local/nginx \
 	DATA_DIR=/data/wwwroot \
 	TEMP_DIR=/tmp/nginx
 
 RUN set -x && \
+	LOCAL_MIRRORS=${LOCAL_MIRRORS:-http://mirrors.ds.com/alpine} && \
+	NET_MIRRORS=${NET_MIRRORS:-http://dl-cdn.alpinelinux.org/alpine} && \
+	LOCAL_MIRRORS_HTTP_CODE=$(curl -LI -m 10 -o /dev/null -sw %{http_code} ${LOCAL_MIRRORS}) && \
+	if [ "${LOCAL_MIRRORS_HTTP_CODE}" == "200" ]; then \
+		echo -e "${LOCAL_MIRRORS}/v3.4/main\n${LOCAL_MIRRORS}/v3.4/community" > /etc/apk/repositories; else \
+		echo -e "${NET_MIRRORS}/v3.4/main\n${NET_MIRRORS}/v3.4/community" > /etc/apk/repositories; fi && \
 	mkdir -p $(dirname ${DATA_DIR}) ${TEMP_DIR} && cd ${TEMP_DIR} && \
 	DOWN_URL="http://nginx.org/download" && \
 	DOWN_URL="${DOWN_URL}/nginx-${VERSION}.tar.gz" && \
-	FILE_NAME=${DOWN_URL##*/} && \
+	FILE_NAME=${DOWN_URL##*/} && mkdir -p ${TEMP_DIR}/${FILE_NAME%%\.tar*} && \
 	apk --update --no-cache upgrade && \
 		apk --update --no-cache add geoip geoip-dev pcre libxslt gd openssl-dev pcre-dev zlib-dev build-base \
 		linux-headers libxslt-dev gd-dev openssl-dev libstdc++ libgcc patch logrotate supervisor inotify-tools git && \
@@ -28,6 +35,8 @@ RUN set -x && \
 	adduser -u 400 -S -h ${DATA_DIR} -s /sbin/nologin -g 'WEB Server' -G www www && \
 	find ${TEMP_DIR} -type f -exec sed -i 's/\r$//g' {} \; && \
 	cd ${FILE_NAME%%\.tar*} && \
+	sed -ri "s/^(#define NGX_HTTP_AUTOINDEX_NAME_LEN).*/\1  ${AUTOINDEX_NAME_LEN}/" src/http/modules/ngx_http_autoindex_module.c && \
+	sed -ri "s/^(#define NGX_HTTP_AUTOINDEX_PREALLOCATE).*/\1  ${AUTOINDEX_NAME_LEN}/" src/http/modules/ngx_http_autoindex_module.c && \
 	patch -p0 < ../nginx_upstream_check_module/check_1.9.2+.patch && \
 	CFLAGS=-Wno-unused-but-set-variable ./configure --prefix=${INSTALL_DIR} \
 		--user=www --group=www \
