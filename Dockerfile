@@ -91,7 +91,6 @@ ENV PATH=${INSTALL_DIR}/sbin:$PATH \
 
 ADD etc /etc
 ADD entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 VOLUME ["${DATA_DIR}"]
 EXPOSE 80 443
