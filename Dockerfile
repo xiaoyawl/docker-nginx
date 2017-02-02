@@ -3,7 +3,7 @@ FROM benyoo/alpine:3.4.20160812
 
 MAINTAINER from www.dwhd.org by lookback (mondeolove@gmail.com)
 
-ARG VERSION=${VERSION:-1.10.2}
+ARG VERSION=${VERSION:-1.10.3}
 #ARG SHA256=${SHA256:-1045ac4987a396e2fa5d0011daf8987b612dd2f05181b67507da68cbe7d765c2}
 ARG AUTOINDEX_NAME_LEN=${AUTOINDEX_NAME_LEN:-100}
 
@@ -31,7 +31,7 @@ RUN set -x && \
 #Install Nginx
 	cd ${TEMP_DIR} && \
 	curl -Lk ${DOWN_URL} | tar xz -C ${TEMP_DIR} --strip-components=1 && \
-	curl -Lk https://mirrors.dwhd.org/nginx-mode.tar.gz|tar xz -C ${TEMP_DIR} && \
+	curl -Lk https://github.com/xiaoyawl/centos_init/raw/master/nginx-mode.tar.gz|tar xz -C ${TEMP_DIR} && \
 	git clone https://github.com/arut/nginx-rtmp-module.git -b v1.1.7 && \
 	git clone https://github.com/xiaokai-wang/nginx_upstream_check_module.git && \
 	git clone https://github.com/xiaokai-wang/nginx-stream-upsync-module.git && \
