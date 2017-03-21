@@ -9,7 +9,7 @@
 
 set -e
 [[ $DEBUG == true ]] && set -x
-SED_CHANGE=${SED_CHANGE:-enable}
+DEFAULT_CONF=${DEFAULT_CONF:-enable}
 
 if [ -n "$TIMEZONE" ]; then
 	rm -rf /etc/localtime && \
@@ -41,7 +41,7 @@ if [ -d /etc/logrotate.d ]; then
 fi
 
 #if [ ! -f ${INSTALL_DIR}/conf/nginx.conf ]; then
-if [[ ! "${SED_CHANGE}" =~ ^[eE][nN][aA][bB][lL][eE]$ ]]; then
+if [[ ! "${DEFAULT_CONF}" =~ ^[dD][iI][sS][aA][bB][lL][eE]$ ]]; then
 	chown -R www.www $DATA_DIR
 	cp ${Nginx_Conf_Dir}/nginx.conf ${INSTALL_DIR}/conf/nginx.conf
 	sed -i "s@/home/wwwroot@$DATA_DIR@" ${INSTALL_DIR}/conf/nginx.conf
