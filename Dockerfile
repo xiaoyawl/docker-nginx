@@ -80,11 +80,13 @@ RUN set -x && \
 	make -j$(getconf _NPROCESSORS_ONLN) && \
 	make install && \
 	curl -Lks https://raw.githubusercontent.com/xiaoyawl/docker-nginx/master/Block_Injections.conf > ${INSTALL_DIR}/conf/Block_Injections.conf && \
+	mv ${INSTALL_DIR} /etc && \
 	runDeps="$( scanelf --needed --nobanner --recursive /usr/local | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' | sort -u | xargs -r apk info --installed | sort -u )" && \
 	runDeps="${runDeps} inotify-tools supervisor logrotate python" && \
 	apk add --no-cache --virtual .ngx-rundeps $runDeps && \
 	apk del .build-deps && \
 	#apk del build-base git patch && \
+	mv /etc/nginx /usr/loacl && \
 	rm -rf /var/cache/apk/* /tmp/* ${INSTALL_DIR}/conf/nginx.conf
 
 ENV PATH=${INSTALL_DIR}/sbin:$PATH \
