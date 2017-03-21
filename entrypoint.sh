@@ -41,11 +41,11 @@ if [ -d /etc/logrotate.d ]; then
 fi
 
 #if [ ! -f ${INSTALL_DIR}/conf/nginx.conf ]; then
-if [[ ! "${DEFAULT_CONF}" =~ ^[dD][iI][sS][aA][bB][lL][eE]$ ]]; then
+if [[ "${DEFAULT_CONF}" =~ ^[eE][nN][aA][bB][lL][eE]$ ]]; then
 	chown -R www.www $DATA_DIR
 	cp ${Nginx_Conf_Dir}/nginx.conf ${INSTALL_DIR}/conf/nginx.conf
 	sed -i "s@/home/wwwroot@$DATA_DIR@" ${INSTALL_DIR}/conf/nginx.conf
-	if [[ "${PHP_FPM}" =~ ^[yY][eS][sS]$ ]]; then
+	if [[ "${PHP_FPM}" =~ ^[eE][nN][aA][bB][lL][eE]$ ]]; then
 		if [ -z "${PHP_FPM_SERVER}" ]; then
 			echo >&2 'error:  missing PHP_FPM_SERVER'
 			echo >&2 '  Did you forget to add -e PHP_FPM_SERVER=... ?'
