@@ -8,8 +8,8 @@ ARG VERSION=${VERSION:-1.10.3}
 ARG AUTOINDEX_NAME_LEN=${AUTOINDEX_NAME_LEN:-100}
 
 ENV INSTALL_DIR=/usr/local/nginx \
-	DATA_DIR=/data/wwwroot \
-	TEMP_DIR=/tmp/nginx
+        DATA_DIR=/data/wwwroot \
+        TEMP_DIR=/tmp/nginx
 
 RUN set -x && \
 	mkdir -p $(dirname ${DATA_DIR}) ${TEMP_DIR} && cd ${TEMP_DIR} && \
@@ -36,7 +36,7 @@ RUN set -x && \
 		--user=www --group=www \
 		--error-log-path=/data/wwwlogs/error.log \
 		--http-log-path=/data/wwwlogs/access.log \
-		--pid-path=/var/run/nginx/nginx.pid \
+		--pid-path=/usr/local/nginx/nginx.pid \
 		--lock-path=/var/lock/nginx.lock \
 		--with-pcre \
 		--with-ipv6 \
@@ -65,11 +65,6 @@ RUN set -x && \
 		--with-http_gunzip_module \
 		--with-http_secure_link_module \
 		--with-http_slice_module \
-		--http-client-body-temp-path=${INSTALL_DIR}/client/ \
-		--http-proxy-temp-path=${INSTALL_DIR}/proxy/ \
-		--http-fastcgi-temp-path=${INSTALL_DIR}/fcgi/ \
-		--http-uwsgi-temp-path=${INSTALL_DIR}/uwsgi \
-		--http-scgi-temp-path=${INSTALL_DIR}/scgi \
 		--add-module=./ngx_http_substitutions_filter_module \
 		--add-module=./ngx_fancyindex \
 		--add-module=./echo_nginx_module \
@@ -77,16 +72,19 @@ RUN set -x && \
 		--add-module=./nginx_upstream_check_module \
 		--add-module=./nginx-stream-upsync-module && \
 		#--add-module=./ngx_http_geoip2_module && \
+		#--http-client-body-temp-path=${INSTALL_DIR}/client/ \
+		#--http-proxy-temp-path=${INSTALL_DIR}/proxy/ \
+		#--http-fastcgi-temp-path=${INSTALL_DIR}/fcgi/ \
+		#--http-uwsgi-temp-path=${INSTALL_DIR}/uwsgi \
+		#--http-scgi-temp-path=${INSTALL_DIR}/scgi \
 	make -j$(getconf _NPROCESSORS_ONLN) && \
 	make install && \
 	curl -Lks https://raw.githubusercontent.com/xiaoyawl/docker-nginx/master/Block_Injections.conf > ${INSTALL_DIR}/conf/Block_Injections.conf && \
-	mv ${INSTALL_DIR} /etc && \
-	runDeps="$( scanelf --needed --nobanner --recursive /usr/local | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' | sort -u | xargs -r apk info --installed | sort -u )" && \
+	runDeps="$( scanelf --needed --nobanner --recursive /usr/local/ | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' | sort -u | xargs -r apk info --installed | sort -u )" && \
 	runDeps="${runDeps} inotify-tools supervisor logrotate python" && \
 	apk add --no-cache --virtual .ngx-rundeps $runDeps && \
 	apk del .build-deps && \
 	#apk del build-base git patch && \
-	mv /etc/nginx /usr/loacl && \
 	rm -rf /var/cache/apk/* /tmp/* ${INSTALL_DIR}/conf/nginx.conf
 
 ENV PATH=${INSTALL_DIR}/sbin:$PATH \

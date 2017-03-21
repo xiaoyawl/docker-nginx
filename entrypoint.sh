@@ -34,7 +34,7 @@ if [ -d /etc/logrotate.d ]; then
 			notifempty
 			sharedscripts
 			postrotate
-		    [ -e /var/run/nginx.pid ] && kill -USR1 \`cat /var/run/nginx.pid\`
+			[ -e /var/run/nginx.pid ] && kill -USR1 \`cat /var/run/nginx.pid\`
 			endscript
 		}
 	EOF
@@ -42,10 +42,10 @@ fi
 
 #if [ ! -f ${INSTALL_DIR}/conf/nginx.conf ]; then
 if [[ "${DEFAULT_CONF}" =~ ^[eE][nN][aA][bB][lL][eE]$ ]]; then
-	chown -R www.www $DATA_DIR
-	cp ${Nginx_Conf_Dir}/nginx.conf ${INSTALL_DIR}/conf/nginx.conf
-	sed -i "s@/home/wwwroot@$DATA_DIR@" ${INSTALL_DIR}/conf/nginx.conf
-	if [[ "${PHP_FPM}" =~ ^[eE][nN][aA][bB][lL][eE]$ ]]; then
+    chown -R www.www $DATA_DIR
+    cat ${Nginx_Conf_Dir}/nginx.conf > ${INSTALL_DIR}/conf/nginx.conf
+    sed -i "s@/home/wwwroot@$DATA_DIR@" ${INSTALL_DIR}/conf/nginx.conf
+    if [[ "${PHP_FPM}" =~ ^[yY][eS][sS]$ ]]; then
 		if [ -z "${PHP_FPM_SERVER}" ]; then
 			echo >&2 'error:  missing PHP_FPM_SERVER'
 			echo >&2 '  Did you forget to add -e PHP_FPM_SERVER=... ?'
@@ -55,9 +55,9 @@ if [[ "${DEFAULT_CONF}" =~ ^[eE][nN][aA][bB][lL][eE]$ ]]; then
 		sed -i "s/PHP_FPM_SERVER/${PHP_FPM_SERVER}/" ${INSTALL_DIR}/conf/nginx.conf
 		sed -i "s/PORT/${PHP_FPM_PORT}/" ${INSTALL_DIR}/conf/nginx.conf
 		[ -f ${DATA_DIR}/index.php ] || cat > ${DATA_DIR}/index.php <<< '<? phpinfo(); ?>'
-	else
+    else
 		sed -i '73,78d' ${INSTALL_DIR}/conf/nginx.conf
-	fi
+    fi
 fi
 
 if [ -n "$REWRITE" ]; then
