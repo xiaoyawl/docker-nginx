@@ -61,8 +61,22 @@ docker build -t benyoo/nginx:1.10.1 github.com/xiaoyawl/docker-nginx
 
 #运行
 1、常规运行方法：
-`docker run -d -p 80:80 -p 443:443 benyoo/nginx:latest
+
+```bash
+docker run -d -p 80:80 -p 443:443 benyoo/nginx:latest
+```
+
+​      使用模板配置文件
+
+```bash
+mkdir -p /usr/local/nginx && curl -Lk https://github.com/xiaoyawl/docker-nginx/raw/master/conf.tar| tar xz -C /usr/local/nginx
+docker run -d -v /usr/local/nginx/conf:/usr/local/nginx/conf -p 80:80 -p 443:443 benyoo/nginx:latest
+```
+
+
+
 2、挂载数据目录方法：
+
 ```bash
 docker run -d -p 80:80 -p 443:443 \
 -v /etc/localtime:/etc/localtime:ro \ #将宿主机的时区文件挂载到容器内
