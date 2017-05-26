@@ -81,8 +81,8 @@ if [ -n "$REWRITE" ]; then
 	fi
 fi
 
-if [[ -n ${SUPERVISOR_PORT} ]]; then
-	sed -i "s/^port.*/port = 0.0.0.0:${SUPERVISOR_PORT}/" /etc/supervisord.conf
-fi
+#if [[ -n ${SUPERVISOR_PORT} ]]; then
+#	sed -i "s/^port.*/port = 0.0.0.0:${SUPERVISOR_PORT}/" /etc/supervisord.conf
+#fi
 
 supervisord -n -c /etc/supervisord.conf
