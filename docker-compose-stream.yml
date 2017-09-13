@@ -1,0 +1,23 @@
+version: '3'
+services:
+  nginx:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1G"
+    container_name: nginx
+    restart: always
+    privileged: true
+    network_mode: host
+    image: benyoo/nginx:1.13.5
+    ports:
+    - 443:443
+    - 80:80
+    environment:
+    - TERM=linux
+    - DEFAULT_CONF=disable
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /data/wwwroot:/data/wwwroot:rw
+    - /data/wwwlogs/nginx_log:/data/wwwlogs:rw
+    - /usr/local/nginx/conf:/usr/local/nginx/conf:rw
