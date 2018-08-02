@@ -25,7 +25,6 @@ RUN set -x && \
         git clone -b v0.10.13 https://github.com/openresty/lua-nginx-module.git && \
         git clone -b v0.1.18 https://github.com/vozlt/nginx-module-vts.git && \
         git clone -b v0.3.0 https://github.com/yaoweibin/nginx_upstream_check_module.git && \
-        git clone -b v1.2.3 https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git && \
         git clone https://github.com/yzprofile/ngx_http_dyups_module.git && \
         git clone https://github.com/cfsego/ngx_log_if.git && \
         addgroup -g 400 -S www && \
@@ -71,7 +70,6 @@ RUN set -x && \
                 --add-module=./lua-nginx-module \
                 --add-module=./nginx-module-vts \
                 --add-module=./nginx_upstream_check_module \
-                --add-module=./nginx-sticky-module-ng \
                 --add-module=./ngx_log_if \
                 --add-module=./ngx_http_dyups_module \
         && \
