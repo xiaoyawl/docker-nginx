@@ -84,5 +84,5 @@ fi
 #if [[ -n ${SUPERVISOR_PORT} ]]; then
 #	sed -i "s/^port.*/port = 0.0.0.0:${SUPERVISOR_PORT}/" /etc/supervisord.conf
 #fi
-
+for i in `find /usr/local/nginx/conf -type f`;do sed -i 's/\r$//g' $i;done
 supervisord -n -c /etc/supervisord.conf
