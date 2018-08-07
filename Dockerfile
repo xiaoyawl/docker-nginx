@@ -9,15 +9,16 @@ ENV INSTALL_DIR=/usr/local/nginx \
         DATA_DIR=/data/wwwroot \
         TEMP_DIR=/tmp/nginx
 
-
 RUN set -x && \
-        mkdir -p $(dirname ${DATA_DIR}) ${TEMP_DIR} && cd ${TEMP_DIR} && \
+        mkdir -p $(dirname ${DATA_DIR}) ${TEMP_DIR} && \
+        apk --update --no-cache upgrade && \
+        apk add --no-cache --virtual .build-deps geoip geoip-dev pcre libxslt gd openssl-dev pcre-dev zlib-dev \
+                build-base linux-headers libxslt-dev gd-dev openssl-dev libstdc++ libgcc patch git tar curl luajit-dev=2.1.0_beta3-r0
+RUN set -x && \
+        cd ${TEMP_DIR} && \
         DOWN_URL="http://nginx.org/download" && \
         DOWN_URL="${DOWN_URL}/nginx-${VERSION}.tar.gz" && \
         FILE_NAME=${DOWN_URL##*/} && mkdir -p ${TEMP_DIR}/${FILE_NAME%%\.tar*} && \
-        apk --update --no-cache upgrade && \
-        apk add --no-cache --virtual .build-deps geoip geoip-dev pcre libxslt gd openssl-dev pcre-dev zlib-dev \
-                build-base linux-headers libxslt-dev gd-dev openssl-dev libstdc++ libgcc patch git tar curl luajit-dev=2.1.0_beta3-r0 && \
         curl -Lk ${DOWN_URL} | tar xz -C ${TEMP_DIR} --strip-components=1 && \
         git clone -b v0.6.4 https://github.com/yaoweibin/ngx_http_substitutions_filter_module.git && \
         git clone -b v0.4.3 https://github.com/aperezdc/ngx-fancyindex.git && \
@@ -25,8 +26,12 @@ RUN set -x && \
         git clone -b v0.10.13 https://github.com/openresty/lua-nginx-module.git && \
         git clone -b v0.1.18 https://github.com/vozlt/nginx-module-vts.git && \
         git clone -b v0.3.0 https://github.com/yaoweibin/nginx_upstream_check_module.git && \
+        git clone https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git && \
         git clone https://github.com/yzprofile/ngx_http_dyups_module.git && \
         git clone https://github.com/cfsego/ngx_log_if.git && \
+        git clone https://github.com/ipipdotnet/nginx-ipip-module.git
+RUN set -x && \
+        cd ${TEMP_DIR} && \
         addgroup -g 400 -S www && \
         adduser -u 400 -S -h ${DATA_DIR} -s /sbin/nologin -g 'WEB Server' -G www www && \
         export LUAJIT_LIB=/usr/lib && \
@@ -43,6 +48,7 @@ RUN set -x && \
                 --with-mail_ssl_module \
                 --with-pcre-jit \
                 --with-file-aio \
+                --with-compat \
                 --with-threads \
                 --with-stream \
                 --with-stream_ssl_module \
@@ -70,8 +76,10 @@ RUN set -x && \
                 --add-module=./lua-nginx-module \
                 --add-module=./nginx-module-vts \
                 --add-module=./nginx_upstream_check_module \
+                --add-module=./nginx-sticky-module-ng \
                 --add-module=./ngx_log_if \
                 --add-module=./ngx_http_dyups_module \
+                --add-dynamic-module=./nginx-ipip-module \
         && \
         make -j$(getconf _NPROCESSORS_ONLN) && \
         make install && \
@@ -87,6 +95,7 @@ ENV PATH=${INSTALL_DIR}/sbin:$PATH \
 
 ADD etc /etc
 ADD entrypoint.sh /entrypoint.sh
+RUN set -x && chmod +x /entrypoint.sh
 
 VOLUME ["${DATA_DIR}"]
 EXPOSE 80 443

@@ -40,24 +40,38 @@ if [ -d /etc/logrotate.d ]; then
 	EOF
 fi
 
-#if [ ! -f ${INSTALL_DIR}/conf/nginx.conf ]; then
 if [[ "${DEFAULT_CONF}" =~ ^[eE][nN][aA][bB][lL][eE]$ ]]; then
-    chown -R www.www $DATA_DIR
-    cat ${Nginx_Conf_Dir}/nginx.conf > ${INSTALL_DIR}/conf/nginx.conf
-    sed -i "s@/home/wwwroot@$DATA_DIR@" ${INSTALL_DIR}/conf/nginx.conf
-    if [[ "${PHP_FPM}" =~ ^[yY][eS][sS]$ ]]; then
+	chown -R www.www $DATA_DIR
+	cat ${Nginx_Conf_Dir}/nginx.conf > ${INSTALL_DIR}/conf/nginx.conf
+	sed -i "s@/home/wwwroot@$DATA_DIR@" ${INSTALL_DIR}/conf/nginx.conf
+	if [[ "${PHP_FPM}" =~ ^[yY][eS][sS]$ ]]; then
 		if [ -z "${PHP_FPM_SERVER}" ]; then
 			echo >&2 'error:  missing PHP_FPM_SERVER'
 			echo >&2 '  Did you forget to add -e PHP_FPM_SERVER=... ?'
 			exit 127
 		fi
 		PHP_FPM_PORT=${PHP_FPM_PORT:-9000}
+		sed -i "/access_log/a \\\n        include php_include.conf;" ${INSTALL_DIR}/conf/nginx.conf
 		sed -i "s/PHP_FPM_SERVER/${PHP_FPM_SERVER}/" ${INSTALL_DIR}/conf/nginx.conf
 		sed -i "s/PORT/${PHP_FPM_PORT}/" ${INSTALL_DIR}/conf/nginx.conf
 		[ -f ${DATA_DIR}/index.php ] || cat > ${DATA_DIR}/index.php <<< '<? phpinfo(); ?>'
-    else
-		sed -i '73,78d' ${INSTALL_DIR}/conf/nginx.conf
-    fi
+		cp -a ${Nginx_Conf_Dir}/php_include.conf ${INSTALL_DIR}/conf/php_include.conf
+	fi
+fi
+
+if [[ "${IPIP}" =~ ^[eE][nN][aA][bB][lL][eE]$ ]]; then
+	if ! ls ${INSTALL_DIR}/conf | grep -q ip_dabases; then
+		mkdir -p ${INSTALL_DIR}/conf/ip_dabases
+	fi
+	if ! ls ${INSTALL_DIR}/conf/ip_dabases| grep -q 17monipdb.datx; then
+		cp -a ${Nginx_Conf_Dir}/17monipdb.datx ${INSTALL_DIR}/conf/ip_dabases/
+	fi
+	if ! grep -q ipip_db; then
+		sed -i "/log_format upstream2/i \    ipip_db ${INSTALL_DIR}/conf/ip_dabases/17monipdb.datx 60m; # 60 minute auto reload db file" ${INSTALL_DIR}/conf/nginx.conf
+	fi
+	if ! grep -q ipip_parse_ip; then
+		sed -i "/log_format upstream2/i \    ipip_parse_ip \$http_x_forwarded_for;\n" ${INSTALL_DIR}/conf/nginx.conf
+	fi
 fi
 
 if [ -n "$REWRITE" ]; then
@@ -84,5 +98,7 @@ fi
 #if [[ -n ${SUPERVISOR_PORT} ]]; then
 #	sed -i "s/^port.*/port = 0.0.0.0:${SUPERVISOR_PORT}/" /etc/supervisord.conf
 #fi
+
 for i in `find /usr/local/nginx/conf -type f`;do sed -i 's/\r$//g' $i;done
+
 supervisord -n -c /etc/supervisord.conf
