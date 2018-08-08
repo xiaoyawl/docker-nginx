@@ -9,12 +9,12 @@ ENV INSTALL_DIR=/usr/local/nginx \
         DATA_DIR=/data/wwwroot \
         TEMP_DIR=/tmp/nginx
 
+
 RUN set -x && \
         mkdir -p $(dirname ${DATA_DIR}) ${TEMP_DIR} && \
         apk --update --no-cache upgrade && \
         apk add --no-cache --virtual .build-deps geoip geoip-dev pcre libxslt gd openssl-dev pcre-dev zlib-dev \
-                build-base linux-headers libxslt-dev gd-dev openssl-dev libstdc++ libgcc patch git tar curl luajit-dev=2.1.0_beta3-r0
-RUN set -x && \
+                build-base linux-headers libxslt-dev gd-dev openssl-dev libstdc++ libgcc patch git tar curl luajit-dev=2.1.0_beta3-r0 && \
         cd ${TEMP_DIR} && \
         DOWN_URL="http://nginx.org/download" && \
         DOWN_URL="${DOWN_URL}/nginx-${VERSION}.tar.gz" && \
@@ -29,9 +29,7 @@ RUN set -x && \
         git clone https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git && \
         git clone https://github.com/yzprofile/ngx_http_dyups_module.git && \
         git clone https://github.com/cfsego/ngx_log_if.git && \
-        git clone https://github.com/ipipdotnet/nginx-ipip-module.git
-RUN set -x && \
-        cd ${TEMP_DIR} && \
+        git clone https://github.com/ipipdotnet/nginx-ipip-module.git && \
         addgroup -g 400 -S www && \
         adduser -u 400 -S -h ${DATA_DIR} -s /sbin/nologin -g 'WEB Server' -G www www && \
         export LUAJIT_LIB=/usr/lib && \
@@ -76,7 +74,6 @@ RUN set -x && \
                 --add-module=./lua-nginx-module \
                 --add-module=./nginx-module-vts \
                 --add-module=./nginx_upstream_check_module \
-                --add-module=./nginx-sticky-module-ng \
                 --add-module=./ngx_log_if \
                 --add-module=./ngx_http_dyups_module \
                 --add-dynamic-module=./nginx-ipip-module \
@@ -94,8 +91,7 @@ ENV PATH=${INSTALL_DIR}/sbin:$PATH \
         TERM=linux
 
 ADD etc /etc
-ADD entrypoint.sh /entrypoint.sh
-RUN set -x && chmod +x /entrypoint.sh
+RUN set -x && mv /etc/entrypoint.sh entrypoint.sh && chmod +x /entrypoint.sh
 
 VOLUME ["${DATA_DIR}"]
 EXPOSE 80 443
