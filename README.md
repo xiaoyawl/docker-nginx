@@ -8,7 +8,7 @@ Dockerfile文件编译出一个[Nginx](http://www.nginx.org/) 容器镜像。
 
 ## 版本
 
-当前版本: [benyoo/nginx:1.10.1](https://hub.docker.com/r/benyoo/nginx/)
+当前版本: [benyoo/nginx:1.14.0](https://hub.docker.com/r/benyoo/nginx/)
 
 # 帮助
 
@@ -47,16 +47,16 @@ RHEL、CentOS、Fedora的用户可以使用`setenforce 0`来禁用selinux以达�
 docker pull benyoo/nginx:latest
 ```
 
-由于`1.10.1`版本的镜像已经打了tag。您也可以通过指定版本号的方式pull指定版本的镜像。 例如，
+由于`1.14.0`版本的镜像已经打了tag。您也可以通过指定版本号的方式pull指定版本的镜像。 例如，
 
 ```bash
-docker pull benyoo/nginx:1.10.1
+docker pull benyoo/nginx:1.14.0
 ```
 
 另外你也可以通过自己构建来实现获取镜像。例如
 
 ```bash
-docker build -t benyoo/nginx:1.10.1 github.com/xiaoyawl/docker-nginx
+docker build -t benyoo/nginx:1.14.0 github.com/xiaoyawl/docker-nginx#master:1.14.0
 ```
 
 #运行
@@ -113,7 +113,7 @@ benyoo/php
 ```bash
 docker run -d --restart always --name nginx_server \
 -p 80:80 -p 443:443 \
--e PHP_FPM=Yes -e PHP_FPM_SERVER=php_server \
+-e PHP_FPM=Enable -e PHP_FPM_SERVER=php_server \
 -e PHP_FPM_PORT=9000 -e REWRITE=wordpress \
 --link php_server:php_server \
 --link mysql_server:mysql_server \

@@ -39,7 +39,7 @@ services:
     volumes_from:
     - php
     environment:
-    - PHP_FPM=Yes
+    - PHP_FPM=Enable
     - PHP_FPM_SERVER=php
     - PHP_FPM_PORT=9000
     - REWRITE=wordpress

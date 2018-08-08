@@ -2,10 +2,8 @@ version: '2'
 
 services:
   nginx:
-    build:
-      context: https://github.com/xiaoyawl/docker-nginx.git
     restart: always
-    image: nginx:1.10.1
+    image: nginx:latest
     container_name: nginx
     ports:
     - "80:80"
