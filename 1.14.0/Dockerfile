@@ -29,6 +29,7 @@ RUN set -x && \
         git clone https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git && \
         git clone https://github.com/yzprofile/ngx_http_dyups_module.git && \
         git clone https://github.com/cfsego/ngx_log_if.git && \
+        git clone https://github.com/openresty/headers-more-nginx-module.git && \
         git clone https://github.com/ipipdotnet/nginx-ipip-module.git && \
         addgroup -g 400 -S www && \
         adduser -u 400 -S -h ${DATA_DIR} -s /sbin/nologin -g 'WEB Server' -G www www && \
@@ -76,6 +77,7 @@ RUN set -x && \
                 --add-module=./nginx_upstream_check_module \
                 --add-module=./ngx_log_if \
                 --add-module=./ngx_http_dyups_module \
+                --add-module=./headers-more-nginx-module \
                 --add-dynamic-module=./nginx-ipip-module \
         && \
         make -j$(getconf _NPROCESSORS_ONLN) && \
