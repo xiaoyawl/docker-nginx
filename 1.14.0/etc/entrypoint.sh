@@ -75,6 +75,10 @@ if [[ "${IPIP}" =~ ^[eE][nN][aA][bB][lL][eE]$ ]]; then
 	fi
 fi
 
+if [ -n "${Server_Name}" ]; then
+        sed -i "/server {/i \    more_set_headers 'Server: $Server_Name';\n" ${INSTALL_DIR}/conf/nginx.conf
+fi
+
 if [ -n "$REWRITE" ]; then
 	[ ! -d ${INSTALL_DIR}/conf/rewrite ] && mkdir -p ${INSTALL_DIR}/conf/rewrite
 	if [ "$REWRITE" = "wordpress" ]; then
