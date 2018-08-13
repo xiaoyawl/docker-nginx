@@ -19,7 +19,7 @@ def hello():
               <code>[ADVANCED]</code>
             </h2>
             <a href="http://flask.pocoo.org/">
-              <img src="/docker_flask.png" alt="Flask">
+              <img src="https://raw.githubusercontent.com/xiaoyawl/docker-nginx/master/uwsgi/etc/app/docker_flask.png" alt="Flask">
               </a>
               <p class="lead">
                 <lead>It’s a Python3 
